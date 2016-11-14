@@ -13,7 +13,7 @@ import {
   GraphQLNonNull,
 
   // This is used to create a required input object
-  GraphQLInputObjectType,
+  // GraphQLInputObjectType,
 
   // This is used to create
   GraphQLInterfaceType,
@@ -25,14 +25,30 @@ import {
   graphql
 } from 'graphql';
 
-// 'results'
-import contacts from './data/contact-resp';
-import contactType from './data/contact-type-resp';
-import macros from './data/macros-resp';
-import users from './data/user-resp';
-// Input Objects
+// Resolve functions, these are used to fetch information.
+import contactResolver from './resolvers/contact-resolver';
+import contactTypeResolver from './resolvers/contact-type-resolver';
+import userResolver from './resolvers/user-resolver';
+import macroResolver from './resolvers/macro-resolver';
 
-// Common Interfaces
+// Common Objects
+// create type, create interface to grab it, and then
+const Macro =  new GraphQLObjectType({
+  name: "Macro",
+  fields: () => ({
+    name: {type: new GraphQLNonNull(GraphQLString)},
+    template: {type: new GraphQLNonNull(GraphQLString)},
+    locale: {type: new GraphQLNonNull(GraphQLString)}
+  })
+});
+
+const User = new GraphQLObjectType({
+   name: "User",
+   fields: () => ({
+     id: {type: new GraphQLNonNull(GraphQLString)},
+     name: {type: new GraphQLNonNull(GraphQLString)}
+   })
+});
 
 // Response Types
 const ContactResponse = new GraphQLObjectType({
@@ -51,15 +67,11 @@ const ContactResponse = new GraphQLObjectType({
     userId: {type: new GraphQLNonNull(GraphQLString)},
     user: {
       type: User,
-      resolve: function ({userId}){
-        return users[userId];
-      }
+      resolve: userResolver
     },
     contactType: {
       type: ContactTypeResponse,
-      resolve: function({contactTypeId}) {
-        return contactType[contactTypeId];
-      }
+      resolve: contactTypeResolver
     }
   })
 });
@@ -76,28 +88,9 @@ const ContactTypeResponse = new GraphQLObjectType({
     isDeleted: {type: new GraphQLNonNull(GraphQLBoolean)},
     macros: {
       type: new GraphQLList(Macro),
-      resolve: function ({id}) {
-        return macros[id];
-      }
+      resolve: macroResolver
     }
   })
-});
-
-const Macro =  new GraphQLObjectType({
-  name: "Macro",
-  fields: () => ({
-    name: {type: new GraphQLNonNull(GraphQLString)},
-    template: {type: new GraphQLNonNull(GraphQLString)},
-    locale: {type: new GraphQLNonNull(GraphQLString)}
-  })
-});
-
-const User = new GraphQLObjectType({
-   name: "User",
-   fields: () => ({
-     id: {type: new GraphQLNonNull(GraphQLString)},
-     name: {type: new GraphQLNonNull(GraphQLString)}
-   })
 });
 
 // This is an object that contains all query functions in our "domain".
@@ -111,7 +104,7 @@ const Query = new GraphQLObjectType({
         contactId: {type: new GraphQLNonNull(GraphQLString)}
       },
       resolve: function (rootValue, args) {
-        return contacts[args.contactId];
+        return contactResolver(args);
       }
     },
     contactTypes: {
@@ -120,7 +113,7 @@ const Query = new GraphQLObjectType({
         contactTypeId: {type: new GraphQLNonNull(GraphQLString)}
       },
       resolve: function(rootValue, args) {
-        return contactType[args.contactTypeId];
+        return contactTypeResolver(args);
       }
     },
     user: {
@@ -129,7 +122,7 @@ const Query = new GraphQLObjectType({
         id: {type: new GraphQLNonNull(GraphQLID)}
       },
       resolve: function(rootValue, args) {
-        return users[args.id];
+        return userResolver(args.id);
       }
     }
   })

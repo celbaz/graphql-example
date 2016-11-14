@@ -4,7 +4,7 @@
   "description": "to run these files do the following:",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "babel-node index.js --presets 'es2015'"
   },
   "keywords": [],
   "author": "",
