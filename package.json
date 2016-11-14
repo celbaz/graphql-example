@@ -1,0 +1,16 @@
+{
+  "name": "contact-example",
+  "version": "1.0.0",
+  "description": "to run these files do the following:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-preset-es2015": "^6.18.0",
+    "graphql": "^0.8.0"
+  }
+}
