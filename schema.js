@@ -58,7 +58,7 @@ const Query = new GraphQLObjectType({
         id: {type: new GraphQLNonNull(GraphQLID)}
       },
       resolve: function(rootValue, args) {
-        return userResolver(args.id);
+        return userResolver(args);
       }
     }
   })

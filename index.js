@@ -39,3 +39,45 @@ graphql(Schema, example1).then(function(result) {
   console.log(JSON.stringify(result));
   console.log("\n GRAPHQL RESULT END");
 });
+
+
+
+/*
+  Example 2 is an example of some of the advantages of using graphql.
+  Here we have decided to grab contactTypes a user has submitted and the tiers of the contacts
+  they have submitted. The first query calls getUsers with an Id and the next
+  utilizes the prexisting schema for the contact and the already existing relation
+  for contact types.
+
+  Here we are only pulling out what we need. If you wanted to get other fields
+  from a query then you could add them to contact or contactType.
+
+*/
+
+const example2 = `
+  query GetUserAndTheirContacts {
+    user(id: 1) {
+      id,
+      name,
+      contacts {
+        tier,
+        contactType {
+          name
+        }
+      }
+    }
+    # Can't call the same base query twice, which is why this query has a key called otherFriend
+    otherFriend: user(id: 2) {
+      id,
+      name
+    }
+  }
+`;
+
+
+//  Example 2 Executes
+graphql(Schema, example2).then(function(result) {
+  console.log("\n GRAPHQL RESULT START \n");
+  console.log(JSON.stringify(result));
+  console.log("\n GRAPHQL RESULT END");
+});
